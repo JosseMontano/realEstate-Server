@@ -18,7 +18,7 @@ app.use((err: any, req: any, res: any, next: any) => {
     message: err.message,
   });
 });
-
+const port = process.env.PORT || 3000
 app.listen(3000, () => {
   console.log("server");
 });
