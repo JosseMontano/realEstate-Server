@@ -23,9 +23,8 @@ app.use(
 /* cors */
 app.use(
   cors({
-   // credentials: true,
-    //  origin: urlCors.secret,
-    origin: "*",
+   credentials: true,
+    origin: urlCors.secret,
   })
 );
 //    origin: urlCors.secret
