@@ -42,6 +42,14 @@ app.use((err: any, req: any, res: any, next: any) => {
   });
 });
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With,Content-Type,Accept'
+  );
+  next();
+});
 const port = server.port || 4000;
 app.listen(port, () => {
   console.log("server is running");
