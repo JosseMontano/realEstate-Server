@@ -22,9 +22,10 @@ app.use(fileUpload({
 app.use(
   cors({
     credentials: true,
-    origin: urlCors.secret || 'https://realestate-c70dc.web.app',
+    origin: 'https://realestate-c70dc.web.app',
   })
 );
+//    origin: urlCors.secret
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
