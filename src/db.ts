@@ -1,22 +1,21 @@
 import { Pool } from "pg";
-const {db} = require('./config')
+const { methodDb1, methodDbTwo } = require("./config");
 
-/* local
+/* method 1 to connect to postgres (dev)
 const pool = new Pool({
-  user: db.user,
-  password: db.password,
-  host: db.host,
-  port: db.port,
-  database: db.database,
+  user: methodDb1.user,
+  password: methodDb1.password,
+  host: methodDb1.host,
+  port: methodDb1.port,
+  database: methodDb1.database,
 });*/
 
-//production
+//method 2 to connect to postgres (production)
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl:{
-    rejectUnauthorized:false,
-    
-  }
-})
+  connectionString: methodDbTwo.databaseUrl,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 module.exports = pool;

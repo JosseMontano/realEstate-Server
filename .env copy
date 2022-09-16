@@ -5,3 +5,17 @@ DB_PORT=5432
 DB_NAME=estatedb
 
 JWT_SECRET=8021947cbbas
+
+
+#method 1 to conect to postgres
+DB_USER=kfverbrwlktnfy
+DB_PASSWORD=586591508869ee26ba2b2e6a95892601a89ebae93e4c149929e82fd52487df5b
+DB_HOST=ec2-35-168-122-84.compute-1.amazonaws.com
+DB_PORT=5432
+DB_NAME=d4b0nifnedvntd
+
+#method 2 to conect to postgres
+DATABASE_URL =postgres://kfverbrwlktnfy:586591508869ee26ba2b2e6a95892601a89ebae93e4c149929e82fd52487df5b@ec2-35-168-122-84.compute-1.amazonaws.com:5432/d4b0nifnedvntd
+
+#JWT
+JWT_SECRET=8021947cbbas
