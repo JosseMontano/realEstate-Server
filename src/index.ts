@@ -43,7 +43,7 @@ app.use((err: any, req: any, res: any, next: any) => {
 });
 
 
-const port = server.port || 4000;
+const port = server.port || "https://realestate-c70dc.web.app";
 app.listen(port, () => {
   console.log("server is running");
 });
