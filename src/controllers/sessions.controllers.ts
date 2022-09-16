@@ -50,11 +50,11 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
   });
 
   /*COOKIES */
-  const tokenEncrypt = CryptoJS.AES.encrypt(
+ /*  const tokenEncrypt = CryptoJS.AES.encrypt(
     JSON.stringify(token),
     "8021947cbba"
   ).toString();
-  res.cookie("token", tokenEncrypt);
+  res.cookie("token", tokenEncrypt); */
   res.json({ auth: true, token });
 };
 
@@ -85,10 +85,11 @@ const verifyValidateToken = (
   next: NextFunction
 ) => {
   //get token
-  const token = req.cookies.token;
+ /*  const token = req.cookies.token;
   var bytes = CryptoJS.AES.decrypt(token, jwtEnv.secret);
-  var decryptedtoken = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-  const tkn = jwt.verify(decryptedtoken, jwtEnv.secret);
+  var decryptedtoken = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)); */
+  const token = req.headers['authorization']
+  const tkn = jwt.verify(token, jwtEnv.secret);
   if (tkn.id > 0)
     return res.status(200).json({
       message: true,
