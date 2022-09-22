@@ -10,6 +10,7 @@ const estateRoutes = require("./routes/estates.routes");
 const sessionRoutes = require("./routes/sessions.routes");
 const photosRoutes = require("./routes/photos..routes");
 const { urlCors, server } = require("./config");
+const userRoutes = require("./routes/users.routes");
 
 /* Setup Express */
 const app = express();
@@ -36,10 +37,10 @@ app.use(cookieParser());
 app.use(estateRoutes);
 app.use(sessionRoutes);
 app.use(photosRoutes);
-
+app.use(userRoutes);
 /* middleware err */
 app.use((err: any, req: any, res: any, next: any) => {
-  return res.json({
+  return res.status(400).json({
     message: err.message,
   });
 });

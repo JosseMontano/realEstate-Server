@@ -9,11 +9,16 @@ const { validatePassword } = require("../utilities/validatePassword");
 
 const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, secrect_password } = req.body;
     const pass = await passwordEncrypt(password);
+
     const result = await pool.query(
       "insert into users (username, email, password) values ($1, $2, $3) returning *",
       [username, email, pass]
+    );
+    const saveTableAccounts = await pool.query(
+      "insert into accounts (secret_password, id_user) values ($1, $2) returning *",
+      [secrect_password, result.rows[0].id]
     );
     const token = jwt.sign({ id: result.rows[0].id }, jwtEnv.secret, {
       expiresIn: 60 * 60 * 24,
@@ -49,12 +54,6 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
     expiresIn: 60 * 60 * 24,
   });
 
-  /*COOKIES */
- /*  const tokenEncrypt = CryptoJS.AES.encrypt(
-    JSON.stringify(token),
-    "8021947cbba"
-  ).toString();
-  res.cookie("token", tokenEncrypt); */
   res.json({ auth: true, token });
 };
 
@@ -78,25 +77,71 @@ const logOut = async (req: Request, res: Response, next: NextFunction) => {
   res.clearCookie("token");
   res.json({ auth: false });
 };
-
-const verifyValidateToken = (
+const recuperateAccount = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  //get token
- /*  const token = req.cookies.token;
-  var bytes = CryptoJS.AES.decrypt(token, jwtEnv.secret);
-  var decryptedtoken = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)); */
-  const token = req.headers['authorization']
+  try {
+    //get email
+    const { email, secret_password, password } = req.body;
+    const getUser = await pool.query(
+      "select id, email from users where email = $1",
+      [email]
+    );
+    if (getUser.rows.length === 0)
+      return res.status(400).json({
+        message: "the email no exits",
+      });
+    const idUser = getUser.rows[0].id;
+    //validate if keySecret is correct
+    const validateKeySecret = await pool.query(
+      `
+      select a.id, a.secret_password, a.id_user 
+      from accounts a, users u where u.email = $1
+      and a.id_user=u.id and a.secret_password = $2`,
+      [email, secret_password]
+    );
+    if (validateKeySecret.rows.length === 0)
+      return res.status(400).json({
+        message: "the secret key is incorrect",
+      });
+
+    //update table users
+    const pass = await passwordEncrypt(password);
+    const result = await pool.query(
+      "update users set password=$1 where id=$2 returning *",
+      [pass, idUser]
+    );
+    if (result.rows.length === 0)
+      return res.status(400).json({
+        message: "Not found",
+      });
+    /*  console.log(result) */
+    return res.status(200).json({operation:true});
+  } catch (error) {
+    next(error);
+  }
+};
+const verifyValidateToken = (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+   const token = req.headers["authorization"];
   const tkn = jwt.verify(token, jwtEnv.secret);
-  if (tkn.id > 0)
+  if (tkn !=null)
     return res.status(200).json({
       message: true,
+      user:tkn.id
     });
   return res.status(500).json({
     message: false,
-  });
+  }); 
+
+
+
+
 };
 module.exports = {
   signUp,
@@ -104,4 +149,5 @@ module.exports = {
   signIn,
   verifyValidateToken,
   logOut,
+  recuperateAccount
 };
