@@ -106,9 +106,35 @@ export const getUser = async (
       `
       select u.email, u.id as id_usuario, p.url, p.public_id, p.id as id_photo from users u, photos 
       p where u.id_photo=p.id and u.email = $1
-        `, [email]
+        `,
+      [email]
     );
 
+    if (result.rows.length === 0)
+      return res.status(400).json({
+        message: "Data not found",
+      });
+    res.status(200).json(result.rows);
+    //res.json(result.rows);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `
+      select u.email, u.id as id_usuario, p.url, p.public_id, p.id as id_photo from users u, photos 
+      p where u.id_photo=p.id and u.id = $1
+        `,
+      [id]
+    );
     if (result.rows.length === 0)
       return res.status(400).json({
         message: "Data not found",

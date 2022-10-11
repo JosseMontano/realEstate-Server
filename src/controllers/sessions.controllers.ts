@@ -1,25 +1,39 @@
 import { NextFunction, Request, Response } from "express";
-var CryptoJS = require("crypto-js");
-const jwt = require("jsonwebtoken");
 
+const jwt = require("jsonwebtoken");
 const { jwtEnv } = require("../config");
 const pool = require("../db");
 const { passwordEncrypt } = require("../utilities/encrypt");
 const { validatePassword } = require("../utilities/validatePassword");
-
+import { uploadImage } from "../libs/cloudinary";
 const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, email, password, secrect_password } = req.body;
+
+    //save Img
+   const secureUrl = "https://res.cloudinary.com/dny08tnju/image/upload/v1664378004/real_estates/desconocido_jt88ba.jpg"
+   const publicId = "real_estates/desconocido_jt88ba"
+   const resPhoto = await pool.query(
+      "insert into photos (url, public_id) values ($1, $2) returning *",
+      [secureUrl, publicId]
+    );
+
+    const idPhoto = resPhoto.rows[0].id;
+ 
+
+    //save data
+
     const pass = await passwordEncrypt(password);
 
     const result = await pool.query(
-      "insert into users (username, email, password) values ($1, $2, $3) returning *",
-      [username, email, pass]
+      "insert into users (username, email, password, id_photo) values ($1, $2, $3,$4) returning *",
+      [username, email, pass, idPhoto]
     );
     const saveTableAccounts = await pool.query(
       "insert into accounts (secret_password, id_user) values ($1, $2) returning *",
       [secrect_password, result.rows[0].id]
     );
+
     const token = jwt.sign({ id: result.rows[0].id }, jwtEnv.secret, {
       expiresIn: 60 * 60 * 24,
     });
@@ -118,30 +132,22 @@ const recuperateAccount = async (
         message: "Not found",
       });
     /*  console.log(result) */
-    return res.status(200).json({operation:true});
+    return res.status(200).json({ operation: true });
   } catch (error) {
     next(error);
   }
 };
-const verifyValidateToken = (
-  req: any,
-  res: Response,
-  next: NextFunction
-) => {
-   const token = req.headers["authorization"];
+const verifyValidateToken = (req: any, res: Response, next: NextFunction) => {
+  const token = req.headers["authorization"];
   const tkn = jwt.verify(token, jwtEnv.secret);
-  if (tkn !=null)
+  if (tkn != null)
     return res.status(200).json({
       message: true,
-      user:tkn.id
+      user: tkn.id,
     });
   return res.status(500).json({
     message: false,
-  }); 
-
-
-
-
+  });
 };
 module.exports = {
   signUp,
@@ -149,5 +155,5 @@ module.exports = {
   signIn,
   verifyValidateToken,
   logOut,
-  recuperateAccount
+  recuperateAccount,
 };

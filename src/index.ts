@@ -11,6 +11,7 @@ const sessionRoutes = require("./routes/sessions.routes");
 const photosRoutes = require("./routes/photos..routes");
 const { urlCors, server } = require("./config");
 const userRoutes = require("./routes/users.routes");
+const commentsRoutes = require("./routes/comments.routes");
 
 /* Setup Express */
 const app = express();
@@ -33,11 +34,14 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(express.static('src'))
+
 /* Routes */
 app.use(estateRoutes);
 app.use(sessionRoutes);
 app.use(photosRoutes);
 app.use(userRoutes);
+app.use(commentsRoutes);
 /* middleware err */
 app.use((err: any, req: any, res: any, next: any) => {
   return res.status(400).json({
