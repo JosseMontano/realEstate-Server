@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { DataSource } from "typeorm";
 const { methodDb1, methodDbTwo } = require("./config");
 
 /* method 1 to connect to postgres (dev)

@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import fileUpload from "express-fileupload";
+import "reflect-metadata"
 var cookieParser = require("cookie-parser");
 
 /* files Routes */
@@ -12,7 +13,8 @@ const photosRoutes = require("./routes/photos..routes");
 const { urlCors, server } = require("./config");
 const userRoutes = require("./routes/users.routes");
 const commentsRoutes = require("./routes/comments.routes");
-
+const questioRoutes = require("./routes/questions.routes")
+const answerRoutes = require("./routes/answers.routes")
 /* Setup Express */
 const app = express();
 /* img */
@@ -42,6 +44,8 @@ app.use(sessionRoutes);
 app.use(photosRoutes);
 app.use(userRoutes);
 app.use(commentsRoutes);
+app.use(questioRoutes);
+app.use(answerRoutes);
 /* middleware err */
 app.use((err: any, req: any, res: any, next: any) => {
   return res.status(400).json({
