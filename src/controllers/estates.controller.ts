@@ -5,7 +5,7 @@ import fs from "fs-extra";
 
 const pool = require("../db");
 
-const getAllEstates = async (
+export const getAllEstates = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -26,7 +26,28 @@ const getAllEstates = async (
   }
 };
 
-const getEstateByUser = async (
+export const getRealEstatesMostRecent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const allEstate = await pool.query(
+      `
+      select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
+      p.public_id, re.title, re.description, u.email
+      from real_estates_photos rp , photos p, real_estates re, users u 
+      where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id
+      ORDER BY re.id desc
+      `
+    );
+    res.json(allEstate.rows);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const getEstateByUser = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -54,7 +75,7 @@ const getEstateByUser = async (
   }
 };
 
-const getEstateOfOnePublication = async (
+export const getEstateOfOnePublication = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -82,7 +103,7 @@ const getEstateOfOnePublication = async (
   }
 };
 
-const createEstate = async (
+export const createEstate = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -122,7 +143,7 @@ const createEstate = async (
   }
 };
 
-const addNewPhotoToRealEstate = async (
+export const addNewPhotoToRealEstate = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -152,7 +173,8 @@ const addNewPhotoToRealEstate = async (
     next(error);
   }
 };
-const deleteEstate = async (
+
+export const deleteEstate = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -193,7 +215,7 @@ const deleteEstate = async (
   }
 };
 
-const updateEstate = async (
+export const updateEstate = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -214,13 +236,4 @@ const updateEstate = async (
   } catch (error) {
     next(error);
   }
-};
-module.exports = {
-  getAllEstates,
-  getEstateByUser,
-  getEstateOfOnePublication,
-  createEstate,
-  deleteEstate,
-  updateEstate,
-  addNewPhotoToRealEstate,
 };

@@ -1,22 +1,27 @@
 import { Router } from "express";
 
 const router = Router();
-const {
+import {
+  addNewPhotoToRealEstate,
+  createEstate,
+  deleteEstate,
   getAllEstates,
   getEstateByUser,
   getEstateOfOnePublication,
-  createEstate,
-  deleteEstate,
+  getRealEstatesMostRecent,
   updateEstate,
-  addNewPhotoToRealEstate
-} = require("../controllers/estates.controller");
+} from "../controllers/estates.controller";
 
 router.get("/estate", getAllEstates);
+router.get("/estateMostRecent", getRealEstatesMostRecent);
 router.get("/estate/:id", getEstateByUser);
 router.get("/estateOfOnePublication/:idRealEstate", getEstateOfOnePublication);
 router.post("/estate", createEstate);
 router.post("/addPhotoToRealEstate/:id_real_estate", addNewPhotoToRealEstate);
 router.put("/estate/:id", updateEstate);
-router.delete("/estate/:idRealEstatePhoto/:idPhoto/:idRealEstate", deleteEstate);
+router.delete(
+  "/estate/:idRealEstatePhoto/:idPhoto/:idRealEstate",
+  deleteEstate
+);
 
 module.exports = router;
