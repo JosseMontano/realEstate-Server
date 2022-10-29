@@ -75,6 +75,34 @@ export const getEstateByUser = async (
   }
 };
 
+export const getEstateByEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { emailParams } = req.params;
+    const result = await pool.query(
+      `
+    select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
+    p.public_id, re.title, re.description, u.email
+    from real_estates_photos rp , photos p, real_estates re, users u 
+    where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and u.email=$1
+    ORDER BY re.id
+      `, [emailParams]
+    );
+    if (result.rows.length === 0)
+      return res.status(404).json({
+        message: "Not found",
+      });
+    res.json(result.rows);
+    //res.json(result.rows);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+
 export const getEstateOfOnePublication = async (
   req: Request,
   res: Response,
