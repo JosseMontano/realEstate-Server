@@ -6,28 +6,30 @@ const pool = require("../db");
 const { passwordEncrypt } = require("../utilities/encrypt");
 const { validatePassword } = require("../utilities/validatePassword");
 import { uploadImage } from "../libs/cloudinary";
+
 const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { username, email, password, secrect_password } = req.body;
+    const { username, email, cellphone_number, password, secrect_password } =
+      req.body;
 
     //save Img
-   const secureUrl = "https://res.cloudinary.com/dny08tnju/image/upload/v1664378004/real_estates/desconocido_jt88ba.jpg"
-   const publicId = "real_estates/desconocido_jt88ba"
-   const resPhoto = await pool.query(
+    const secureUrl =
+      "https://res.cloudinary.com/dny08tnju/image/upload/v1664378004/real_estates/desconocido_jt88ba.jpg";
+    const publicId = "real_estates/desconocido_jt88ba";
+    const resPhoto = await pool.query(
       "insert into photos (url, public_id) values ($1, $2) returning *",
       [secureUrl, publicId]
     );
 
     const idPhoto = resPhoto.rows[0].id;
- 
 
     //save data
 
     const pass = await passwordEncrypt(password);
 
     const result = await pool.query(
-      "insert into users (username, email, password, id_photo) values ($1, $2, $3,$4) returning *",
-      [username, email, pass, idPhoto]
+      "insert into users (username, email,cellphonenumber,password, id_photo, qualification) values ($1, $2, $3,$4,$5, $6) returning *",
+      [username, email, cellphone_number, pass, idPhoto, 0]
     );
     const saveTableAccounts = await pool.query(
       "insert into accounts (secret_password, id_user) values ($1, $2) returning *",

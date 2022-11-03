@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { number } from "zod";
 
 const pool = require("../db");
 
@@ -8,13 +9,14 @@ export const getAllCommentsByUser = async (
   next: NextFunction
 ) => {
   try {
-    const {person_commented} = req.params;
+    const { person_commented } = req.params;
     const allComments = await pool.query(
       `
       select * from comments where person_commented = $1
-      `,[person_commented]
+      `,
+      [person_commented]
     );
-   /*  // get data of User that is commentator
+    /*  // get data of User that is commentator
     const idCommentator = allComments.rows[0].commentator
     const Commentator = await pool.query(
         `
@@ -35,13 +37,35 @@ export const createComment = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { commentator, description, person_commented } = req.body;
+  const { commentator, description, person_commented, amount_start } = req.body;
   try {
     //save data of the realEstate
     const result = await pool.query(
-      "insert into comments (description, commentator, person_commented) values ($1, $2, $3) returning *",
-      [description, commentator, person_commented]
+      "insert into comments (description, commentator, person_commented, amount_start) values ($1, $2, $3, $4) returning *",
+      [description, commentator, person_commented, amount_start]
     );
+
+    const amountStarBD = await pool.query(
+      `
+        select * from users where id= $1
+        `,
+      [person_commented]
+    );
+
+    let amountStartBDUnique = amountStarBD.rows[0].qualification;
+
+    amountStartBDUnique =
+      parseFloat(amountStartBDUnique) + parseFloat(amount_start);
+
+    const updateAmountStartUser = await pool.query(
+      "update users set qualification=$1 where id=$2 returning *",
+      [amountStartBDUnique, person_commented]
+    );
+    if (updateAmountStartUser.rows.length === 0)
+      return res.status(404).json({
+        message: "Not found",
+      });
+
     res.status(200).json(result.rows[0]);
   } catch (error: any) {
     next(error);
@@ -54,11 +78,10 @@ export const deleteComment = async (
 ) => {
   try {
     //delete data real Estates
-    const {id} = req.params;
-    const resRealEstate = await pool.query(
-      "delete from comments where id=$1",
-      [id]
-    );
+    const { id } = req.params;
+    const resRealEstate = await pool.query("delete from comments where id=$1", [
+      id,
+    ]);
     if (resRealEstate.rowCount === 0)
       return res.status(404).json({
         message: "Not found",

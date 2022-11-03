@@ -14,7 +14,7 @@ export const getAllEstates = async (
     const allEstate = await pool.query(
       `
       select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-      p.public_id, re.title, re.description, u.email
+      p.public_id, re.title, re.description, u.email, u.id as idUser
       from real_estates_photos rp , photos p, real_estates re, users u 
       where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id
       ORDER BY re.id
@@ -35,7 +35,7 @@ export const getRealEstatesMostRecent = async (
     const allEstate = await pool.query(
       `
       select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-      p.public_id, re.title, re.description, u.email
+      p.public_id, re.title, re.description, u.email, u.id as idUser
       from real_estates_photos rp , photos p, real_estates re, users u 
       where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id
       ORDER BY re.id desc
@@ -46,6 +46,31 @@ export const getRealEstatesMostRecent = async (
     next(error);
   }
 };
+
+export const getRealEstatesByUSerRecommended = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const allEstate = await pool.query(
+      `
+      SELECT * 
+      FROM(SELECT DISTINCT on (u.email) re.id as idRealEstate, rp.id as idRealEstatePhoto,
+          p.id as idPhoto,  p.url, 
+           p.public_id, re.title, re.description, u.email, u.id as idUser, u.qualification
+           from real_estates_photos rp , photos p, real_estates re, users u  
+           where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id 
+           ORDER BY u.email DESC) users ORDER BY users.qualification desc;
+      `
+    );
+    res.json(allEstate.rows);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+
 
 export const getEstateByUser = async (
   req: Request,
@@ -66,7 +91,7 @@ export const getEstateByUser = async (
 
     if (result.rows.length === 0)
       return res.status(404).json({
-        message: "Not found",
+        message: "The User has no Publications",
       });
     res.json(result.rows);
     //res.json(result.rows);
@@ -81,15 +106,18 @@ export const getEstateByEmail = async (
   next: NextFunction
 ) => {
   try {
-    const { emailParams } = req.params;
+    const { idUser } = req.params;
+
+
     const result = await pool.query(
       `
     select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-    p.public_id, re.title, re.description, u.email
+    p.public_id, re.title, re.description, u.email, u.cellphonenumber
     from real_estates_photos rp , photos p, real_estates re, users u 
-    where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and u.email=$1
+    where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and u.id=$1
     ORDER BY re.id
-      `, [emailParams]
+      `,
+      [idUser]
     );
     if (result.rows.length === 0)
       return res.status(404).json({
@@ -101,7 +129,6 @@ export const getEstateByEmail = async (
     next(error);
   }
 };
-
 
 export const getEstateOfOnePublication = async (
   req: Request,
