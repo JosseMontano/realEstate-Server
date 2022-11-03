@@ -16,16 +16,6 @@ export const getAllCommentsByUser = async (
       `,
       [person_commented]
     );
-    /*  // get data of User that is commentator
-    const idCommentator = allComments.rows[0].commentator
-    const Commentator = await pool.query(
-        `
-        select * from users where id= $1
-        `,[idCommentator]
-      );
-    console.log(Commentator.rows[0])
- */
-
     res.json(allComments.rows);
   } catch (error: any) {
     next(error);
