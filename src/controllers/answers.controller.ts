@@ -12,6 +12,7 @@ export const getAllAnswer = async (
   next: NextFunction
 ) => {
   try {
+    
     const allEstate = await pool.query(
       ` select id, answer, id_real_estate from answers
         `

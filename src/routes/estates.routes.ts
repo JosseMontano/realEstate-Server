@@ -11,7 +11,8 @@ import {
   getEstateOfOnePublication,
   getRealEstatesMostRecent,
   updateEstate,
-  getRealEstatesByUSerRecommended
+  getRealEstatesByUSerRecommended,
+  updateStateAvailable,
 } from "../controllers/estates.controller";
 
 router.get("/estate", getAllEstates);
@@ -27,5 +28,6 @@ router.delete(
   "/estate/:idRealEstatePhoto/:idPhoto/:idRealEstate",
   deleteEstate
 );
+router.put("/availableEstate/:id", updateStateAvailable);
 
 module.exports = router;
