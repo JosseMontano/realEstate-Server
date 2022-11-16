@@ -19,6 +19,7 @@ import {
   getRealEstatesByStudioApartament,
   getRealEstatesByGarzonier,
   getRealEstatesOthers,
+  getAllEstatesByType
 } from "../controllers/estates.controller";
 
 router.get("/estate", getAllEstates);
@@ -29,6 +30,7 @@ router.get("/estateByDepartament", getRealEstatesBydepartament);
 router.get("/estateByStudioApartament", getRealEstatesByStudioApartament);
 router.get("/estateByGarzonier", getRealEstatesByGarzonier);
 router.get("/estateOthers", getRealEstatesOthers);
+router.get("/estateByType/:type", getAllEstatesByType);
 
 router.get("/estateRecommendedByUser", getRealEstatesByUSerRecommended);
 router.get("/estate/:id", getEstateByUser);

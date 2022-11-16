@@ -11,8 +11,9 @@ export const getAllCommentsByUser = async (
   try {
     const { person_commented } = req.params;
     const allComments = await pool.query(
-      `
-      select * from comments where person_commented = $1
+      `select u.email, c.id as id_comment, c.commentator, c.description,c.amount_start, p.url
+      from comments c, users u, photos p
+      where c.commentator = u.id and c.person_commented = $1 and u.id_photo=p.id
       `,
       [person_commented]
     );
@@ -61,6 +62,7 @@ export const createComment = async (
     next(error);
   }
 };
+
 export const deleteComment = async (
   req: Request,
   res: Response,

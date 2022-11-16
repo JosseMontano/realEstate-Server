@@ -330,6 +330,30 @@ export const getTypeRealEstat = async (
   }
 };
 
+
+export const getAllEstatesByType = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { type } = req.params;
+    const allEstate = await pool.query(
+      `
+      select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
+      p.public_id, re.title, re.description, u.email, u.id as idUser
+      from real_estates_photos rp , photos p, real_estates re, users u, type_real_estates tre
+      where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.available=1 and
+      re.id_type_real_estate = tre.id and tre.name_type =$1
+      ORDER BY re.id`, [type]
+    );
+    res.json(allEstate.rows);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+
 export const getRealEstatesByHouse = async (
   req: Request,
   res: Response,
