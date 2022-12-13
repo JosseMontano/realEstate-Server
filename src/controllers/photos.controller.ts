@@ -17,6 +17,25 @@ const getAllPhotos = async (
   }
 };
 
+const getPhoto = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `
+    select * from photos where id = ${id}
+      `
+    );
+
+    if (result.rows.length === 0)
+      return res.status(404).json({
+        message: "Imagen not found",
+      });
+    res.json(result.rows);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
 const createPhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let f = req.files?.url as UploadedFile;
@@ -53,6 +72,7 @@ const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
 
 module.exports = {
   getAllPhotos,
+  getPhoto,
   createPhoto,
   deletePhoto,
 };

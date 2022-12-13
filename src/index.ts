@@ -27,10 +27,9 @@ app.use(
 /* cors */
 app.use(
   cors({
-   credentials: false,
-    origin: [urlCors.secret, urlCors.img360], 
-    optionsSuccessStatus: 200 
- 
+    credentials: true,
+    origin: [urlCors.secret, urlCors.img360],
+    /*     origin: urlCors.secret, */
   })
 );
 //    origin: urlCors.secret
