@@ -29,13 +29,14 @@ app.use((0, express_fileupload_1.default)({
 /* cors */
 app.use((0, cors_1.default)({
     credentials: true,
-    origin: urlCors.secret,
+    origin: [urlCors.secret, urlCors.img360],
+    /*     origin: urlCors.secret, */
 }));
 //    origin: urlCors.secret
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
 app.use(cookieParser());
-app.use(express_1.default.static('src'));
+app.use(express_1.default.static("src"));
 /* Routes */
 app.use(estateRoutes);
 app.use(sessionRoutes);

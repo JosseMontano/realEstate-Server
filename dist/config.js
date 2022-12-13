@@ -1,7 +1,6 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = require("dotenv");
-(0, dotenv_1.config)();
+const { config } = require("dotenv");
+config();
 module.exports = {
     methodDb1: {
         user: process.env.DB_USER,
@@ -17,7 +16,8 @@ module.exports = {
         secret: process.env.JWT_SECRET
     },
     urlCors: {
-        secret: process.env.CORS
+        secret: process.env.CORS,
+        img360: process.env.CORSIMG360,
     },
     server: {
         port: process.env.PORT
