@@ -41,6 +41,12 @@ export const getRealEstatesMostRecent = async (
       ORDER BY re.id desc limit 8
       `
     );
+     if (allEstate.rows.length === 0) {
+      return res.status(404).json({
+        message: "Data not found",
+      });
+    } 
+
     res.json(allEstate.rows);
   } catch (error: any) {
     next(error);
@@ -64,6 +70,11 @@ export const getRealEstatesByUSerRecommended = async (
            ORDER BY u.email DESC) users ORDER BY users.qualification desc;
       `
     );
+    if (allEstate.rows.length === 0) {
+      return res.status(404).json({
+        message: "Data not found",
+      });
+    }
     res.json(allEstate.rows);
   } catch (error: any) {
     next(error);
@@ -162,12 +173,12 @@ export const createEstate = async (
   next: NextFunction
 ) => {
   const { title, description, id_user, id_type } = req.body;
-  const id_typeNumber = parseInt(id_type);
+
   try {
     //save data of the realEstate
     const result = await pool.query(
       "insert into real_estates (title, description, id_user, id_type_real_estate, available) values ($1, $2, $3, $4, $5) returning *",
-      [title, description, id_user, id_typeNumber, 1]
+      [title, description, id_user, id_type, 1]
     );
     const id_real_estate = result.rows[0].id;
 
@@ -330,7 +341,6 @@ export const getTypeRealEstat = async (
   }
 };
 
-
 export const getAllEstatesByType = async (
   req: Request,
   res: Response,
@@ -345,14 +355,14 @@ export const getAllEstatesByType = async (
       from real_estates_photos rp , photos p, real_estates re, users u, type_real_estates tre
       where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.available=1 and
       re.id_type_real_estate = tre.id and tre.name_type =$1
-      ORDER BY re.id`, [type]
+      ORDER BY re.id`,
+      [type]
     );
     res.json(allEstate.rows);
   } catch (error: any) {
     next(error);
   }
 };
-
 
 export const getRealEstatesByHouse = async (
   req: Request,
