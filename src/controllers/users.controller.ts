@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { uploadImage, deleteImage } from "../libs/cloudinary";
 import { UploadedFile } from "express-fileupload";
 import fs from "fs-extra";
+import { transporter } from "../libs/mailer";
+const { emailer } = require("../config");
 const pool = require("../db");
 
 export const updatePhotoUser = async (
@@ -95,6 +97,7 @@ export const updatePhotoUser = async (
     next(error);
   }
 };
+
 export const getUser = async (
   req: Request,
   res: Response,
@@ -142,6 +145,34 @@ export const getUserById = async (
     res.status(200).json(result.rows);
     //res.json(result.rows);
   } catch (error: any) {
+    next(error);
+  }
+};
+
+export const sendEmailToRecuperateAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email } = req.params;
+  try {
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: `"Forgot password 👻" ${emailer.user}`, // sender address
+      to: email, // list of receivers
+      subject: "Fogot Password", // Subject line
+      html: `
+      <p>Utiliza el siguiente codigo para cambiar la contraseña, la proxima trata de no olvidarla</p>
+      <center><h2>22356</h2></center>
+      `, // html body
+    });
+    if (info.messageId) {
+      return res.status(200).json({
+        operation: true,
+      });
+    }
+    return res.status(500);
+  } catch (error) {
     next(error);
   }
 };

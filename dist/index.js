@@ -9,6 +9,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 require("reflect-metadata");
+const nodemailer = require("nodemailer");
 var cookieParser = require("cookie-parser");
 /* files Routes */
 const estateRoutes = require("./routes/estates.routes");

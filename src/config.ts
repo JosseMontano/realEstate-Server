@@ -1,5 +1,3 @@
-
-
 const {config } = require("dotenv")
 
 config();
@@ -23,5 +21,9 @@ module.exports = {
     },
     server:{
         port:process.env.PORT
+    },
+    emailer:{
+        user:process.env.USER,
+        pass:process.env.PASS
     }
 }

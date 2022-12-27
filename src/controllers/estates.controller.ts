@@ -91,8 +91,7 @@ export const getEstateByUser = async (
     const result = await pool.query(
       `
     select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-    p.public_id, re.title, re.description, u.email, CASE WHEN re.available = 1 THEN 'Disponible'
-    WHEN re.available = 0 THEN 'No esta disponible' END AS state
+    p.public_id, re.title, re.description, u.email, re.available
     from real_estates_photos rp , photos p, real_estates re, users u 
     where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.id_user=${id}
     ORDER BY re.id

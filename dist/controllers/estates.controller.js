@@ -39,8 +39,13 @@ const getRealEstatesMostRecent = (req, res, next) => __awaiter(void 0, void 0, v
       p.public_id, re.title, re.description, u.email, u.id as idUser
       from real_estates_photos rp , photos p, real_estates re, users u 
       where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.available=1
-      ORDER BY re.id desc
+      ORDER BY re.id desc limit 8
       `);
+        if (allEstate.rows.length === 0) {
+            return res.status(404).json({
+                message: "Data not found",
+            });
+        }
         res.json(allEstate.rows);
     }
     catch (error) {
@@ -59,6 +64,11 @@ const getRealEstatesByUSerRecommended = (req, res, next) => __awaiter(void 0, vo
            where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.available=1
            ORDER BY u.email DESC) users ORDER BY users.qualification desc;
       `);
+        if (allEstate.rows.length === 0) {
+            return res.status(404).json({
+                message: "Data not found",
+            });
+        }
         res.json(allEstate.rows);
     }
     catch (error) {
@@ -71,8 +81,7 @@ const getEstateByUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const { id } = req.params;
         const result = yield pool.query(`
     select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-    p.public_id, re.title, re.description, u.email, CASE WHEN re.available = 1 THEN 'Disponible'
-    WHEN re.available = 0 THEN 'No esta disponible' END AS state
+    p.public_id, re.title, re.description, u.email, re.available
     from real_estates_photos rp , photos p, real_estates re, users u 
     where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.id_user=${id}
     ORDER BY re.id
@@ -136,10 +145,9 @@ exports.getEstateOfOnePublication = getEstateOfOnePublication;
 const createEstate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { title, description, id_user, id_type } = req.body;
-    const id_typeNumber = parseInt(id_type);
     try {
         //save data of the realEstate
-        const result = yield pool.query("insert into real_estates (title, description, id_user, id_type_real_estate, available) values ($1, $2, $3, $4, $5) returning *", [title, description, id_user, id_typeNumber, 1]);
+        const result = yield pool.query("insert into real_estates (title, description, id_user, id_type_real_estate, available) values ($1, $2, $3, $4, $5) returning *", [title, description, id_user, id_type, 1]);
         const id_real_estate = result.rows[0].id;
         //save first photo
         let f = (_a = req.files) === null || _a === void 0 ? void 0 : _a.url;
