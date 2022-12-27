@@ -6,22 +6,6 @@ const QuestionSchema = z.object({
   answer: z.string().nonempty(),
 });
 
-export const getAllAnswer = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    
-    const allEstate = await pool.query(
-      ` select id, answer, id_real_estate from answers
-        `
-    );
-    res.json(allEstate.rows);
-  } catch (error: any) {
-    next(error);
-  }
-};
 
 export const getAnswerQuestionByRealEstate = async (
   req: Request,

@@ -1,19 +1,19 @@
 import { Router } from "express";
 const router = Router();
-const {
-  signUp,
+
+import {
+  logOut,
   me,
   signIn,
+  signUp,
   verifyValidateToken,
-  logOut,
-  recuperateAccount,
-} = require("../controllers/sessions.controllers");
+} from "../controllers/sessions.controllers";
+
 const verifyToken = require("../controllers/verifyToken");
 
 router.post("/signup", signUp);
 router.get("/me", verifyToken, me);
 router.post("/signin", signIn);
-router.post("/recuperateAccount", recuperateAccount);
 router.get("/verifyToken", verifyValidateToken);
 router.get("/logout", logOut);
 

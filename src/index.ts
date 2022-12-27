@@ -8,7 +8,7 @@ import "reflect-metadata";
 var cookieParser = require("cookie-parser");
 
 /* files Routes */
-const estateRoutes = require("./routes/estates.routes");
+const estateRoutes = require("./routes/realEstate.routes");
 const sessionRoutes = require("./routes/sessions.routes");
 const photosRoutes = require("./routes/photos..routes");
 const { urlCors, server } = require("./config");

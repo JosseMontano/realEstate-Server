@@ -5,9 +5,8 @@ const { jwtEnv } = require("../config");
 const pool = require("../db");
 const { passwordEncrypt } = require("../utilities/encrypt");
 const { validatePassword } = require("../utilities/validatePassword");
-import { uploadImage } from "../libs/cloudinary";
 
-const signUp = async (req: Request, res: Response, next: NextFunction) => {
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, email, cellphone_number, password, secrect_password } =
       req.body;
@@ -48,7 +47,7 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const signIn = async (req: Request, res: Response, next: NextFunction) => {
+export const signIn = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   const result = await pool.query(
     "select id, username, email from users where email = $1",
@@ -73,7 +72,7 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
   res.json({ auth: true, token });
 };
 
-const me = async (req: any, res: Response, next: NextFunction) => {
+export const me = async (req: any, res: Response, next: NextFunction) => {
   try {
     const result = await pool.query(
       "select id, username, email from users where id = $1",
@@ -89,57 +88,12 @@ const me = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-const logOut = async (req: Request, res: Response, next: NextFunction) => {
+export const logOut = async (req: Request, res: Response, next: NextFunction) => {
   res.clearCookie("token");
   res.json({ auth: false });
 };
-const recuperateAccount = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    //get email
-    const { email, secret_password, password } = req.body;
-    const getUser = await pool.query(
-      "select id, email from users where email = $1",
-      [email]
-    );
-    if (getUser.rows.length === 0)
-      return res.status(400).json({
-        message: "the email no exits",
-      });
-    const idUser = getUser.rows[0].id;
-    //validate if keySecret is correct
-    const validateKeySecret = await pool.query(
-      `
-      select a.id, a.secret_password, a.id_user 
-      from accounts a, users u where u.email = $1
-      and a.id_user=u.id and a.secret_password = $2`,
-      [email, secret_password]
-    );
-    if (validateKeySecret.rows.length === 0)
-      return res.status(400).json({
-        message: "the secret key is incorrect",
-      });
 
-    //update table users
-    const pass = await passwordEncrypt(password);
-    const result = await pool.query(
-      "update users set password=$1 where id=$2 returning *",
-      [pass, idUser]
-    );
-    if (result.rows.length === 0)
-      return res.status(400).json({
-        message: "Not found",
-      });
-    /*  console.log(result) */
-    return res.status(200).json({ operation: true });
-  } catch (error) {
-    next(error);
-  }
-};
-const verifyValidateToken = (req: any, res: Response, next: NextFunction) => {
+export const verifyValidateToken = (req: any, res: Response, next: NextFunction) => {
   const token = req.headers["authorization"];
   const tkn = jwt.verify(token, jwtEnv.secret);
   if (tkn != null)
@@ -150,12 +104,4 @@ const verifyValidateToken = (req: any, res: Response, next: NextFunction) => {
   return res.status(500).json({
     message: false,
   });
-};
-module.exports = {
-  signUp,
-  me,
-  signIn,
-  verifyValidateToken,
-  logOut,
-  recuperateAccount,
 };
