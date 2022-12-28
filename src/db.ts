@@ -11,12 +11,4 @@ const pool = new Pool({
   database: methodDb1.database,
 });
 
-//method 2 to connect to postgres (production)
-/* const pool = new Pool({
-  connectionString: methodDbTwo.databaseUrl,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-}); */
-
 module.exports = pool;

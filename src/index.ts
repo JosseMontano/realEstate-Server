@@ -16,15 +16,6 @@ var cookieParser = require("cookie-parser");
 const app = express();
 
 async function start() {
-  //apollo
-  app.use(
-    "/graphql",
-    graphqlHTTP({
-      graphiql: true,
-      schema,
-    })
-  );
-
   /* img */
   app.use(
     fileUpload({
@@ -36,8 +27,7 @@ async function start() {
   app.use(
     cors({
       credentials: true,
-      origin: [urlCors.secret, urlCors.img360],
-      /*     origin: urlCors.secret, */
+      origin: [urlCors.secret],
     })
   );
   //    origin: urlCors.secret
@@ -46,6 +36,15 @@ async function start() {
   app.use(cookieParser());
 
   app.use(express.static("src"));
+
+  //apollo
+  app.use(
+    "/graphql",
+    graphqlHTTP({
+      graphiql: true,
+      schema,
+    })
+  );
 
   //routes
   metRoute(app);

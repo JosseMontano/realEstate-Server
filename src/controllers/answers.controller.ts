@@ -16,7 +16,6 @@ export const get = async (idRealEstate: number) => {
         `,
     [idRealEstate]
   );
-  console.log(allEstate.rows);
   return allEstate.rows;
 };
 

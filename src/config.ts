@@ -17,7 +17,6 @@ module.exports = {
     },
     urlCors:{
         secret:process.env.CORS,
-        img360:process.env.CORSIMG360,
     },
     server:{
         port:process.env.PORT

@@ -12,5 +12,6 @@ export const answerType = new GraphQLObjectType({
     answer: { type: GraphQLString },
     id_real_estate: { type: GraphQLFloat },
     id_question: { type: GraphQLFloat },
+    question:{type: GraphQLString}
   },
 });
