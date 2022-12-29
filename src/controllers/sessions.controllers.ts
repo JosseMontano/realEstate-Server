@@ -13,7 +13,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
 
     //save Img
     const secureUrl =
-      "https://res.cloudinary.com/dny08tnju/image/upload/v1664378004/real_estates/desconocido_jt88ba.jpg";
+      "https://res.cloudinary.com/dny08tnju/image/upload/v1672280689/real_estates/desconocido_hgz7m2.jpg";
     const publicId = "real_estates/desconocido_jt88ba";
     const resPhoto = await pool.query(
       "insert into photos (url, public_id) values ($1, $2) returning *",

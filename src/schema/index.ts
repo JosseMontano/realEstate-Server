@@ -22,6 +22,13 @@ const Mutation = new GraphQLObjectType({
   },
 });
 
+const Subscription = new GraphQLObjectType({
+  name: "Subscription",
+  fields:{
+
+  }
+})
+
 export const schema = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
