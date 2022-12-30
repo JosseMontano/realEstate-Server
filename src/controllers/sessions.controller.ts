@@ -6,10 +6,13 @@ const pool = require("../db");
 const { passwordEncrypt } = require("../utilities/encrypt");
 const { validatePassword } = require("../utilities/validatePassword");
 
-export const signUp = async (req: Request, res: Response, next: NextFunction) => {
+export const signUp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { username, email, cellphone_number, password, secrect_password } =
-      req.body;
+    const { username, email, cellphone_number, password } = req.body;
 
     //save Img
     const secureUrl =
@@ -30,11 +33,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
       "insert into users (username, email,cellphonenumber,password, id_photo, qualification) values ($1, $2, $3,$4,$5, $6) returning *",
       [username, email, cellphone_number, pass, idPhoto, 0]
     );
-    const saveTableAccounts = await pool.query(
-      "insert into accounts (secret_password, id_user) values ($1, $2) returning *",
-      [secrect_password, result.rows[0].id]
-    );
-
+ 
     const token = jwt.sign({ id: result.rows[0].id }, jwtEnv.secret, {
       expiresIn: 60 * 60 * 24,
     });
@@ -47,7 +46,11 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-export const signIn = async (req: Request, res: Response, next: NextFunction) => {
+export const signIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
   const result = await pool.query(
     "select id, username, email from users where email = $1",
@@ -88,12 +91,20 @@ export const me = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export const logOut = async (req: Request, res: Response, next: NextFunction) => {
+export const logOut = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   res.clearCookie("token");
   res.json({ auth: false });
 };
 
-export const verifyValidateToken = (req: any, res: Response, next: NextFunction) => {
+export const verifyValidateToken = (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
   const token = req.headers["authorization"];
   const tkn = jwt.verify(token, jwtEnv.secret);
   if (tkn != null)

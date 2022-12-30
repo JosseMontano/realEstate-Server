@@ -4,11 +4,13 @@ const router = Router();
 import {
   updatePhotoUser,
   getUserById,
-  sendEmailToRecuperateAccount,
+  sendEmailCode,
+  changePassword
 } from "../controllers/users.controller";
 
 router.put("/editPhotoUser/:email", updatePhotoUser);
-router.put("/recuperateAccount/:email", sendEmailToRecuperateAccount);
+router.post("/recuperateAccount/:email", sendEmailCode);
+router.post("/changePassword/", changePassword);
 router.get("/getUserComplete/:id", getUserById);
 
 module.exports = router;

@@ -7,7 +7,7 @@ import {
   signIn,
   signUp,
   verifyValidateToken,
-} from "../controllers/sessions.controllers";
+} from "../controllers/sessions.controller";
 
 const verifyToken = require("../controllers/verifyToken");
 

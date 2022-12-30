@@ -3,6 +3,8 @@ import { uploadImage, deleteImage } from "../libs/cloudinary";
 import { UploadedFile } from "express-fileupload";
 import fs from "fs-extra";
 import { transporter } from "../libs/mailer";
+const { passwordEncrypt } = require("../utilities/encrypt");
+
 const { emailer } = require("../config");
 const pool = require("../db");
 
@@ -123,13 +125,42 @@ export const getUserById = async (
   }
 };
 
-export const sendEmailToRecuperateAccount = async (
+export const sendEmailCode = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { email } = req.params;
   try {
+    //search user in database
+    const resultUser = await pool.query(
+      "select id from users where email = $1",
+      [email]
+    );
+    if (resultUser.rows.length === 0) {
+      return res.status(401).json({
+        message: "the email doesnt exists",
+      });
+    }
+    //save code in database
+    const idUser = resultUser.rows[0].id;
+    const resulAccountCode = await pool.query(
+      "select id from accounts where id_user = $1",
+      [idUser]
+    );
+    const secrect_password = Math.floor(Math.random() * 90000) + 10000;
+    if (resultUser.rows.length === 0) {
+      await pool.query(
+        "insert into accounts (secret_password, id_user) values ($1, $2) returning *",
+        [secrect_password, idUser]
+      );
+    } else {
+      await pool.query(
+        "update accounts set secret_password = $1 where id_user=$2 returning *",
+        [secrect_password, idUser]
+      );
+    }
+
     // send mail with defined transport object
     let info = await transporter.sendMail({
       from: `"Forgot password 👻" ${emailer.user}`, // sender address
@@ -137,7 +168,7 @@ export const sendEmailToRecuperateAccount = async (
       subject: "Fogot Password", // Subject line
       html: `
       <p>Utiliza el siguiente codigo para cambiar la contraseña, la proxima trata de no olvidarla</p>
-      <center><h2>22356</h2></center>
+      <center><h2>${secrect_password}</h2></center>
       `, // html body
     });
     if (info.messageId) {
@@ -146,6 +177,45 @@ export const sendEmailToRecuperateAccount = async (
       });
     }
     return res.status(500);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password, codeEmail } = req.body;
+    const userQuery = await pool.query("select id from users where email = $1", [
+      email,
+    ]);
+    if (userQuery.rows.length === 0) {
+      return res.status(404).json({
+        message: "the email doesnt exists",
+      });
+    }
+    const idUser = userQuery.rows[0].id
+    const searchCodeEmail = await pool.query(
+      "select id from accounts where id_user = $1 and secret_password = $2",
+      [idUser, codeEmail]
+    );
+
+    if (searchCodeEmail.rows.length === 0) {
+      return res.status(404).json({
+        message: "the code it's incorrect",
+      });
+    }
+    const pass = await passwordEncrypt(password);
+    await pool.query("update users set password = $1 where id=$2 returning *", [
+      pass,
+      idUser,
+    ]);
+    return res.status(200).json({
+      operation: true,
+    });
   } catch (error) {
     next(error);
   }
