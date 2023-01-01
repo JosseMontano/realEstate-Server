@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 const jwt = require("jsonwebtoken");
 const { jwtEnv } = require("../config");
-var CryptoJS = require("crypto-js");
+
 
 function verifyToken(req: any, res: Response, next: NextFunction) {
   const token = req.headers['authorization']

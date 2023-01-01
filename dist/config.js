@@ -13,13 +13,17 @@ module.exports = {
         databaseUrl: process.env.DATABASE_URL,
     },
     jwtEnv: {
-        secret: process.env.JWT_SECRET
+        secret: process.env.JWT_SECRET,
     },
     urlCors: {
         secret: process.env.CORS,
-        img360: process.env.CORSIMG360,
     },
     server: {
-        port: process.env.PORT
-    }
+        port: process.env.PORT,
+        portCors: process.env.PORTCORS,
+    },
+    emailer: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 };

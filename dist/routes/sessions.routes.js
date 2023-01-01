@@ -2,12 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const router = (0, express_1.Router)();
-const { signUp, me, signIn, verifyValidateToken, logOut, recuperateAccount, } = require("../controllers/sessions.controllers");
+const sessions_controller_1 = require("../controllers/sessions.controller");
 const verifyToken = require("../controllers/verifyToken");
-router.post("/signup", signUp);
-router.get("/me", verifyToken, me);
-router.post("/signin", signIn);
-router.post("/recuperateAccount", recuperateAccount);
-router.get("/verifyToken", verifyValidateToken);
-router.get("/logout", logOut);
+router.post("/signup", sessions_controller_1.signUp);
+router.get("/me", verifyToken, sessions_controller_1.me);
+router.post("/signin", sessions_controller_1.signIn);
+router.get("/verifyToken", sessions_controller_1.verifyValidateToken);
+router.get("/logout", sessions_controller_1.logOut);
 module.exports = router;
