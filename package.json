@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/ws": "^8.5.3",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.31.0",
     "cookie-parser": "^1.4.6",
@@ -23,6 +24,10 @@
     "express-graphql": "^0.12.0",
     "fs-extra": "^10.1.0",
     "graphql": "^16.6.0",
+    "graphql-subscriptions": "^2.0.0",
+    "graphql-tag": "^2.12.6",
+    "graphql-tools": "^8.3.14",
+    "graphql-ws": "^5.11.2",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.7",
@@ -31,6 +36,7 @@
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.10",
     "universal-cookie": "^4.0.4",
+    "ws": "^8.11.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {

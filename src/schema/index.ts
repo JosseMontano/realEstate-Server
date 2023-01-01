@@ -4,6 +4,7 @@ import { getAnswerQuestionByRealEstate } from "./queries/answer";
 import { getAllCommentsByUser } from "./queries/comments";
 import { CREATE_COMMENT } from "./mutations/comment";
 import { DELETE_COMMENT } from "./mutations/comment";
+import { DELETE_A_COMMENT} from "./subscriptions/comments";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -22,14 +23,15 @@ const Mutation = new GraphQLObjectType({
   },
 });
 
-const Subscription = new GraphQLObjectType({
+ const Subscription = new GraphQLObjectType({
   name: "Subscription",
   fields:{
-
+    DELETE_A_COMMENT
   }
-})
-
+}) 
+ 
 export const schema = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
+  subscription:Subscription,  
 });

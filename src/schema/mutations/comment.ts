@@ -8,8 +8,10 @@ import Comments from "../../interfaces/comments";
 import { commentType } from "../typeDef/comment";
 import { createComment } from "../../controllers/comments.controller";
 import { deleteComment } from "../../controllers/comments.controller";
+import { pubsub } from "../subscriptions/comments";
+
 export const CREATE_COMMENT = {
-  type: commentType,
+  type: commentType, //lo que devuelve
   args: {
     commentator: { type: GraphQLFloat },
     description: { type: GraphQLString },
@@ -29,6 +31,14 @@ export const DELETE_COMMENT = {
   },
   async resolve(_: any, { id }: Comments) {
     const res = await deleteComment(id);
+    const obj = {
+      id,
+    };
+    if (res) {
+      await pubsub.publish("DELETE_A_COMMENT", {
+        DELETE_A_COMMENT: obj,
+      });
+    }
     return res;
   },
 };

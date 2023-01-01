@@ -5,11 +5,13 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 import "reflect-metadata";
 import { graphqlHTTP } from "express-graphql";
-
 import { schema } from "./schema";
 import { metRoute } from "./routes";
-const { urlCors, server } = require("./config");
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 
+ 
+const { urlCors, server } = require("./config"); 
 var cookieParser = require("cookie-parser");
 
 /* Setup Express */
@@ -34,16 +36,17 @@ async function start() {
   app.use(morgan("dev"));
   app.use(express.json());
   app.use(cookieParser());
-
   app.use(express.static("src"));
 
   //apollo
   app.use(
     "/graphql",
-    graphqlHTTP({
-      graphiql: true,
+    graphqlHTTP((req) => ({
       schema,
-    })
+      graphiql: {
+        headerEditorEnabled: true,
+      },
+    }))
   );
 
   //routes
@@ -56,10 +59,18 @@ async function start() {
     });
   });
 
-  const port = server.port || 4000;
+  const port = server.port || 3000;
+  const portCors = server.portCors || 3002;
 
   app.listen(port, () => {
-    console.log("server is running");
+    const server = new WebSocketServer({
+      port: portCors,
+      path: "/graphql",
+    });
+
+    useServer({ schema }, server);
+
+    console.log("Listening to port 3000");
   });
 }
 
