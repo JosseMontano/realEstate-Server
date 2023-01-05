@@ -30,3 +30,10 @@ export const realEstateDeleteType = new GraphQLObjectType({
   },
 });
 
+export const realEsateUpdateStateType = new GraphQLObjectType({
+  name: "realEstateUpdayeState",
+  fields: {
+    idRealEstate: { type: GraphQLID },
+    state: { type: GraphQLFloat},
+  },
+});

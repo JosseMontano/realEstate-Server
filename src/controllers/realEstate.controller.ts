@@ -204,22 +204,19 @@ export const deleteEstate = async (
   await deleteImage(getId.rows[0].public_id);
 
   //delete data relational
- await pool.query(
-    "delete from real_estates_photos where id = $1",
-    [idRealEstatePhoto]
-  );
+  await pool.query("delete from real_estates_photos where id = $1", [
+    idRealEstatePhoto,
+  ]);
 
   //delete data photos
-  await pool.query("delete from photos where id = $1", [
-    idPhoto,
-  ]);
+  await pool.query("delete from photos where id = $1", [idPhoto]);
 
   //delete data real Estates
   const resRealEstate = await pool.query(
     "delete from real_estates where id=$1",
     [idRealEstate]
   );
-  if (resRealEstate.rowCount === 0) return false
+  if (resRealEstate.rowCount === 0) return false;
   return true;
 };
 
@@ -247,25 +244,15 @@ export const updateEstate = async (
 };
 
 export const updateStateAvailable = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+  idRealEstate: number,
+  available: boolean
 ) => {
-  try {
-    const { id } = req.params;
-    const { available } = req.body;
-    const result = await pool.query(
-      "update real_estates set available=$1 where id=$2 returning *",
-      [available, id]
-    );
-    if (result.rows.length === 0)
-      return res.status(404).json({
-        message: "Not found",
-      });
-    return res.json(result.rows[0]);
-  } catch (error) {
-    next(error);
-  }
+  const result = await pool.query(
+    "update real_estates set available=$1 where id=$2 returning *",
+    [available, idRealEstate]
+  );
+  if (result.rows.length === 0) return false;
+  return true;
 };
 
 export const getTypeRealEstat = async (

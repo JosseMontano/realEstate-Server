@@ -5,8 +5,8 @@ import { getAllCommentsByUser } from "./queries/comments";
 import { CREATE_COMMENT, DELETE_COMMENT } from "./mutations/comment";
 import { DELETE_A_COMMENT, ADD_A_COMMENT } from "./subscriptions/comments";
 import { GET_REAL_ESTATE_BY_ID_USER } from "./queries/realEstate";
-import { DELETE_REAL_ESTATE } from "./mutations/realEstate";
-import { DELETE_A_RE } from "./subscriptions/realEstate";
+import { DELETE_REAL_ESTATE, UPDATE_STATE_RE } from "./mutations/realEstate";
+import { DELETE_A_RE, UPDATE_STATE_A_RE } from "./subscriptions/realEstate";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -24,6 +24,7 @@ const Mutation = new GraphQLObjectType({
     CREATE_COMMENT,
     DELETE_COMMENT,
     DELETE_REAL_ESTATE,
+    UPDATE_STATE_RE,
   },
 });
 
@@ -33,6 +34,7 @@ const Subscription = new GraphQLObjectType({
     ADD_A_COMMENT,
     DELETE_A_COMMENT,
     DELETE_A_RE,
+    UPDATE_STATE_A_RE
   },
 });
 

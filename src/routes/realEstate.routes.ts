@@ -4,14 +4,11 @@ const router = Router();
 import {
   addNewPhotoToRealEstate,
   createEstate,
-  deleteEstate,
   getAllEstates,
-/*   getEstateByUser, */
   getEstateOfOnePublication,
   getRealEstatesMostRecent,
   updateEstate,
   getRealEstatesByUSerRecommended,
-  updateStateAvailable,
   getTypeRealEstat,
   getAllEstatesByType,
 } from "../controllers/realEstate.controller";
@@ -27,6 +24,5 @@ router.post("/estate", createEstate);
 router.post("/addPhotoToRealEstate/:id_real_estate", addNewPhotoToRealEstate);
 router.put("/estate/:id", updateEstate);
 
-router.put("/availableEstate/:id", updateStateAvailable);
 
 module.exports = router;
