@@ -4,7 +4,7 @@ import { uploadImage, deleteImage } from "../libs/cloudinary";
 import fs from "fs-extra";
 const pool = require("../db");
 
-const getAllPhotos = async (
+/* const getAllPhotos = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,7 +15,7 @@ const getAllPhotos = async (
   } catch (error: any) {
     next(error);
   }
-};
+}; */
 
 const getPhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -71,7 +71,6 @@ const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 module.exports = {
-  getAllPhotos,
   getPhoto,
   createPhoto,
   deletePhoto,

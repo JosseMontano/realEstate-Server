@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { uploadImage, deleteImage } from "../libs/cloudinary";
 import { UploadedFile } from "express-fileupload";
 import fs from "fs-extra";
-
+import RealEstateType from "../interfaces/realEstate";
 const pool = require("../db");
 
 const queryRealEstate = `
@@ -75,60 +75,21 @@ export const getRealEstatesByUSerRecommended = async (
 };
 
 export const getEstateByUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-    const result = await pool.query(
-      `
+  idUser: number
+): Promise<RealEstateType[]> => {
+  const result = await pool.query(
+    `
     select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-    p.public_id, re.title, re.description, u.email, re.available
+    p.public_id, re.title, re.description, u.email, re.available, u.cellphonenumber
     from real_estates_photos rp , photos p, real_estates re, users u 
-    where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.id_user=${id}
+    where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and re.id_user=${idUser}
     ORDER BY re.id
       `
-    );
+  );
 
-    if (result.rows.length === 0)
-      return res.status(404).json({
-        message: "The User has no Publications",
-      });
-    res.json(result.rows);
-    //res.json(result.rows);
-  } catch (error: any) {
-    next(error);
-  }
-};
+  if (result.rows.length === 0) return [];
 
-export const getEstateByEmail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { idUser } = req.params;
-
-    const result = await pool.query(
-      `
-    select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-    p.public_id, re.title, re.description, u.email, u.cellphonenumber
-    from real_estates_photos rp , photos p, real_estates re, users u 
-    where rp.id_photo = p.id and rp.id_real_estate = re.id and re.id_user = u.id and u.id=$1
-    ORDER BY re.id
-      `,
-      [idUser]
-    );
-    if (result.rows.length === 0)
-      return res.status(404).json({
-        message: "Not found",
-      });
-    res.json(result.rows);
-    //res.json(result.rows);
-  } catch (error: any) {
-    next(error);
-  }
+  return result.rows;
 };
 
 export const getEstateOfOnePublication = async (
@@ -232,44 +193,34 @@ export const addNewPhotoToRealEstate = async (
 };
 
 export const deleteEstate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+  idRealEstatePhoto: number,
+  idPhoto: number,
+  idRealEstate: number
 ) => {
-  try {
-    const { idRealEstatePhoto } = req.params;
-    const { idPhoto } = req.params;
-    const { idRealEstate } = req.params;
-    //delete img from cloudinary
-    const getId = await pool.query("select * from photos where id = $1", [
-      idPhoto,
-    ]);
-    await deleteImage(getId.rows[0].public_id);
+  //delete img from cloudinary
+  const getId = await pool.query("select * from photos where id = $1", [
+    idPhoto,
+  ]);
+  await deleteImage(getId.rows[0].public_id);
 
-    //delete data relational
-    const resultRealEstates = await pool.query(
-      "delete from real_estates_photos where id = $1",
-      [idRealEstatePhoto]
-    );
+  //delete data relational
+ await pool.query(
+    "delete from real_estates_photos where id = $1",
+    [idRealEstatePhoto]
+  );
 
-    //delete data photos
-    const resPhoto = await pool.query("delete from photos where id = $1", [
-      idPhoto,
-    ]);
+  //delete data photos
+  await pool.query("delete from photos where id = $1", [
+    idPhoto,
+  ]);
 
-    //delete data real Estates
-    const resRealEstate = await pool.query(
-      "delete from real_estates where id=$1",
-      [idRealEstate]
-    );
-    if (resRealEstate.rowCount === 0)
-      return res.status(404).json({
-        message: "Not found",
-      });
-    return res.json({ action: true });
-  } catch (error: any) {
-    next(error);
-  }
+  //delete data real Estates
+  const resRealEstate = await pool.query(
+    "delete from real_estates where id=$1",
+    [idRealEstate]
+  );
+  if (resRealEstate.rowCount === 0) return false
+  return true;
 };
 
 export const updateEstate = async (
@@ -355,4 +306,3 @@ export const getAllEstatesByType = async (
     next(error);
   }
 };
-
