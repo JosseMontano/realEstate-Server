@@ -10,8 +10,7 @@ import { metRoute } from "./routes";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 
- 
-const { urlCors, server } = require("./config"); 
+const { urlCors, server } = require("./config");
 var cookieParser = require("cookie-parser");
 
 /* Setup Express */
@@ -62,7 +61,7 @@ async function start() {
   const port = server.port || 3000;
   const portCors = server.portCors || 3002;
 
-  app.listen(port, () => {
+  app.listen({ port, portCors }, () => {
     const server = new WebSocketServer({
       port: portCors,
       path: "/graphql",
@@ -70,7 +69,8 @@ async function start() {
 
     useServer({ schema }, server);
 
-    console.log("Listening to port 3000");
+    console.log(`Listening to port ${port}`);
+    console.log(`Listening to port ${portCors}`);
   });
 }
 

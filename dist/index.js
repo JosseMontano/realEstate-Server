@@ -61,13 +61,14 @@ function start() {
         });
         const port = server.port || 3000;
         const portCors = server.portCors || 3002;
-        app.listen(port, () => {
+        app.listen({ port, portCors }, () => {
             const server = new ws_1.WebSocketServer({
                 port: portCors,
                 path: "/graphql",
             });
             (0, ws_2.useServer)({ schema: schema_1.schema }, server);
-            console.log("Listening to port 3000");
+            console.log(`Listening to port ${port}`);
+            console.log(`Listening to port ${portCors}`);
         });
     });
 }
