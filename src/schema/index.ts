@@ -10,7 +10,7 @@ import { DELETE_A_RE, UPDATE_STATE_A_RE } from "./subscriptions/realEstate";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
-  fields: {
+  fields:{
     getAnswerQuestionByRealEstate,
     getAllCommentsByUser,
     GET_REAL_ESTATE_BY_ID_USER,
