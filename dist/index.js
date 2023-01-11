@@ -23,10 +23,12 @@ const schema_1 = require("./schema");
 const routes_1 = require("./routes");
 const ws_1 = require("ws");
 const ws_2 = require("graphql-ws/lib/use/ws");
+const http_1 = require("http");
 const { urlCors, server } = require("./config");
 var cookieParser = require("cookie-parser");
 /* Setup Express */
 const app = (0, express_1.default)();
+const httpServer = (0, http_1.createServer)(app);
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
         /* img */
@@ -44,13 +46,6 @@ function start() {
         app.use(express_1.default.json());
         app.use(cookieParser());
         app.use(express_1.default.static("src"));
-        //apollo
-        app.use("/graphql", (0, express_graphql_1.graphqlHTTP)((req) => ({
-            schema: schema_1.schema,
-            graphiql: {
-                headerEditorEnabled: true,
-            },
-        })));
         //routes
         (0, routes_1.metRoute)(app);
         /* middleware err */
@@ -61,14 +56,20 @@ function start() {
         });
         const port = server.port || 3000;
         const portCors = server.portCors || 3002;
-        app.listen({ port, portCors }, () => {
-            const server = new ws_1.WebSocketServer({
-                port: portCors,
-                path: "/graphql",
-            });
-            (0, ws_2.useServer)({ schema: schema_1.schema }, server);
+        const serverWS = new ws_1.WebSocketServer({
+            server: httpServer,
+            path: "/graphql",
+        });
+        (0, ws_2.useServer)({ schema: schema_1.schema }, serverWS);
+        httpServer.listen(port, () => {
+            //apollo
+            app.use("/graphql", (0, express_graphql_1.graphqlHTTP)((req) => ({
+                schema: schema_1.schema,
+                graphiql: {
+                    headerEditorEnabled: true,
+                },
+            })));
             console.log(`Listening to port ${port}`);
-            console.log(`Listening to port ${portCors}`);
         });
     });
 }
