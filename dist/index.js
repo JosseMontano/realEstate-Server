@@ -70,6 +70,7 @@ function start() {
                 },
             })));
             console.log(`Listening to port ${port}`);
+            console.log(serverWS.options.port);
         });
     });
 }
