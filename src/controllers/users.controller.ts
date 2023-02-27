@@ -109,8 +109,8 @@ export const getUserById = async (
     const { id } = req.params;
     const result = await pool.query(
       `
-      select u.email, u.id as id_usuario, p.url, p.public_id, p.id as id_photo from users u, photos 
-      p where u.id_photo=p.id and u.id = $1
+      select u.email, u.id as id_usuario, u.url_photo as url from users u 
+      where u.id = $1
         `,
       [id]
     );
@@ -145,7 +145,7 @@ export const sendEmailCode = async (
     //save code in database
     const idUser = resultUser.rows[0].id;
     const resulAccountCode = await pool.query(
-      "select id from accounts where id_user = $1",
+      "select id from accounts where user_id = $1",
       [idUser]
     );
     const secrect_password = Math.floor(Math.random() * 90000) + 10000;
@@ -189,15 +189,16 @@ export const changePassword = async (
 ) => {
   try {
     const { email, password, codeEmail } = req.body;
-    const userQuery = await pool.query("select id from users where email = $1", [
-      email,
-    ]);
+    const userQuery = await pool.query(
+      "select id from users where email = $1",
+      [email]
+    );
     if (userQuery.rows.length === 0) {
       return res.status(404).json({
         message: "the email doesnt exists",
       });
     }
-    const idUser = userQuery.rows[0].id
+    const idUser = userQuery.rows[0].id;
     const searchCodeEmail = await pool.query(
       "select id from accounts where id_user = $1 and secret_password = $2",
       [idUser, codeEmail]

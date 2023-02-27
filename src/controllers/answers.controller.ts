@@ -9,7 +9,7 @@ const QuestionSchema = z.object({
 
 export const get = async (idRealEstate: number) => {
   const allEstate = await pool.query(
-    ` select aq.id, aq.id_answer, aq.id_question , q.question, ans.answer,
+    `select aq.id, aq.id_answer, aq.id_question , q.question, ans.answer,
       ans.id_real_estate
       from answers_questions aq, questions q, answers ans
       where aq.id_question=q.id and aq.id_answer = ans.id and ans.id_real_estate=$1

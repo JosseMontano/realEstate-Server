@@ -9,16 +9,16 @@ import {
 export const realEstateType = new GraphQLObjectType({
   name: "realEstate",
   fields: {
-    idphoto: { type: GraphQLFloat },
-    idrealestatephoto: { type: GraphQLFloat },
-    idrealestate: { type: GraphQLFloat },
-    iduser: { type: GraphQLFloat },
+    id_photo: { type: GraphQLFloat },
+    id_real_estate_photo: { type: GraphQLFloat },
+    id_real_estate: { type: GraphQLFloat },
+    id_user: { type: GraphQLFloat },
     url: { type: GraphQLString },
     title: { type: GraphQLString },
     description: { type: GraphQLString },
-    publicId: { type: GraphQLFloat },
+    public_id: { type: GraphQLFloat },
     email: { type: GraphQLString },
-    cellphonenumber: { type: GraphQLFloat },
+    cellphone_number: { type: GraphQLFloat },
     available: { type: GraphQLBoolean },
   },
 });

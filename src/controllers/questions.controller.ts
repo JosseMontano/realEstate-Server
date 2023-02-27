@@ -6,6 +6,7 @@ const QuestionSchema = z.object({
   question: z.string().nonempty(),
 });
 
+/*
 export const getAllquestions = async (
   req: Request,
   res: Response,
@@ -21,6 +22,7 @@ export const getAllquestions = async (
     next(error);
   }
 };
+*/
 
 export const getAllquestionsByIdRealEstate = async (
   req: Request,
@@ -30,7 +32,7 @@ export const getAllquestionsByIdRealEstate = async (
   try {
     const { idRealEstate } = req.params;
     const allQuestionResponse = await pool.query(
-      ` select aq.id, aq.id_question as idQuestion 
+      `select aq.id, aq.id_question as idQuestion 
       from answers_questions aq, answers a where aq.id_answer=a.id 
       and a.id_real_estate=$1
         `,
