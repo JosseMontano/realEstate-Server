@@ -141,7 +141,7 @@ export const createEstate = async (
   try {
     //save data of the realEstate
     const result = await pool.query(
-      `insert into real_estates (title, description, user_id, id_type_real_estate, 
+      `insert into real_estates (title, description, user_id, type_real_estate_id, 
         available,amount_bedroom,price,amount_bathroom,square_meter) 
       values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *`,
       [
@@ -171,7 +171,7 @@ export const createEstate = async (
 
       //save in table relational
       const resTableRelational = await pool.query(
-        "insert into real_estates_photos (id_photo, id_real_estate) values ($1, $2) returning *",
+        "insert into real_estates_photos (photo_id, real_estate_id) values ($1, $2) returning *",
         [idPhoto, id_real_estate]
       );
       res.json(resTableRelational.rows[0]);
@@ -204,7 +204,7 @@ export const addNewPhotoToRealEstate = async (
 
       //save in table relational
       const resTableRelational = await pool.query(
-        "insert into real_estates_photos (id_photo, id_real_estate) values ($1, $2) returning *",
+        "insert into real_estates_photos (photo_id, real_estate_id) values ($1, $2) returning *",
         [idPhoto, id_real_estate]
       );
       return res.json({ action: true });
@@ -303,11 +303,11 @@ export const getAllEstatesByType = async (
     const { type } = req.params;
     const allEstate = await pool.query(
       `
-      select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
-      p.public_id, re.title, re.description, u.email, u.id as idUser
+      select DISTINCT on (re.id) re.id as id_real_estate, rp.id as id_real_estate_photo,p.id as id_photo,  p.url, 
+      p.public_id, re.title, re.description, u.email, u.id as id_user
       from real_estates_photos rp , photos p, real_estates re, users u, type_real_estates tre
-      where rp.id_photo = p.id and rp.id_real_estate = re.id and re.user_id = u.id and re.available=true and
-      re.id_type_real_estate = tre.id and tre.name_type =$1
+      where rp.photo_id = p.id and rp.real_estate_id = re.id and re.user_id = u.id and re.available=true and
+      re.type_real_estate_id = tre.id and tre.name =$1
       ORDER BY re.id`,
       [type]
     );

@@ -4,18 +4,6 @@ import { uploadImage, deleteImage } from "../libs/cloudinary";
 import fs from "fs-extra";
 const pool = require("../db");
 
-/* const getAllPhotos = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const allEstate = await pool.query("select * from photos");
-    res.json(allEstate.rows);
-  } catch (error: any) {
-    next(error);
-  }
-}; */
 
 const getPhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {

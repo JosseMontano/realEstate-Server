@@ -6,23 +6,6 @@ const QuestionSchema = z.object({
   question: z.string().nonempty(),
 });
 
-/*
-export const getAllquestions = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const allEstate = await pool.query(
-      ` select id, question from questions
-        `
-    );
-    res.json(allEstate.rows);
-  } catch (error: any) {
-    next(error);
-  }
-};
-*/
 
 export const getAllquestionsByIdRealEstate = async (
   req: Request,
@@ -99,3 +82,4 @@ export const deleteQuestion = async (
     next(error);
   }
 };
+
