@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const router = (0, express_1.Router)();
+const realEstate_controller_1 = require("../controllers/realEstate.controller");
+router.get("/estate", realEstate_controller_1.getAllEstates);
+router.get("/type_real_estate", realEstate_controller_1.getTypeRealEstat);
+router.get("/estateMostRecent", realEstate_controller_1.getRealEstatesMostRecent);
+router.get("/estateRecommendedByUser", realEstate_controller_1.getRealEstatesByUSerRecommended);
+router.get("/estateOfOnePublication/:idRealEstate", realEstate_controller_1.getEstateOfOnePublication);
+router.put("/estate/:id", realEstate_controller_1.updateEstate);
+router.get("/estateByType/:type", realEstate_controller_1.getAllEstatesByType);
+router.post("/estateByFilterCustom", realEstate_controller_1.getAllEstatesByFilterCustom);
+router.post("/estate", realEstate_controller_1.createEstate);
+router.post("/addPhotoToRealEstate/:id_real_estate", realEstate_controller_1.addNewPhotoToRealEstate);
+module.exports = router;
