@@ -11,9 +11,9 @@ const QuestionSchema = z.object({
 
 export const getAllCommentsByUserSer = async (person_commented: number) => {
   const allComments = await pool.query(
-    `select u.email, c.id as id_comment, c.commentator, c.description,c.amount_start, p.url
-      from comments c, users u, photos p
-      where c.commentator = u.id and c.person_commented = $1 and u.id_photo=p.id
+    `select u.email, c.id as id_comment, c.commentator, c.description,c.amount_start, u.url_photo
+    from comments c, users u
+    where c.commentator = u.id and c.person_commented = $1
       `,
     [person_commented]
   );
@@ -29,18 +29,15 @@ export const createComment = async (comments: Comments) => {
     [description, commentator, person_commented, amount_start]
   );
 
-  const amountStarBD = await pool.query(
-    `
-        select * from users where id= $1
-        `,
-    [person_commented]
-  );
+  const amountStarBD = await pool.query(`select * from users where id= $1`, [
+    person_commented,
+  ]);
 
   let amountStartBDUnique = amountStarBD.rows[0].qualification;
 
   amountStartBDUnique = parseFloat(amountStartBDUnique) + amount_start;
 
-  const updateAmountStartUser = await pool.query(
+  await pool.query(
     "update users set qualification=$1 where id=$2 returning *",
     [amountStartBDUnique, person_commented]
   );

@@ -14,7 +14,7 @@ export const commentType = new GraphQLObjectType({
     commentator: { type: GraphQLFloat },
     description: { type: GraphQLString },
     amount_start: { type: GraphQLFloat },
-    url: { type: GraphQLString },
+    url_photo: { type: GraphQLString },
   },
 });
 

@@ -11,7 +11,7 @@ exports.commentType = new graphql_1.GraphQLObjectType({
         commentator: { type: graphql_1.GraphQLFloat },
         description: { type: graphql_1.GraphQLString },
         amount_start: { type: graphql_1.GraphQLFloat },
-        url: { type: graphql_1.GraphQLString },
+        url_photo: { type: graphql_1.GraphQLString },
     },
 });
 exports.commentDeleteType = new graphql_1.GraphQLObjectType({

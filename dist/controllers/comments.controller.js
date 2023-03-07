@@ -19,9 +19,9 @@ const QuestionSchema = zod_1.z.object({
     amount_start: zod_1.z.number().nonnegative(),
 });
 const getAllCommentsByUserSer = (person_commented) => __awaiter(void 0, void 0, void 0, function* () {
-    const allComments = yield pool.query(`select u.email, c.id as id_comment, c.commentator, c.description,c.amount_start, p.url
-      from comments c, users u, photos p
-      where c.commentator = u.id and c.person_commented = $1 and u.id_photo=p.id
+    const allComments = yield pool.query(`select u.email, c.id as id_comment, c.commentator, c.description,c.amount_start, u.url_photo
+    from comments c, users u
+    where c.commentator = u.id and c.person_commented = $1
       `, [person_commented]);
     return allComments.rows;
 });
@@ -31,12 +31,12 @@ const createComment = (comments) => __awaiter(void 0, void 0, void 0, function* 
     QuestionSchema.parse(comments);
     const { amount_start, commentator, person_commented, description } = comments;
     const result = yield pool.query("insert into comments (description, commentator, person_commented, amount_start) values ($1, $2, $3, $4) returning *", [description, commentator, person_commented, amount_start]);
-    const amountStarBD = yield pool.query(`
-        select * from users where id= $1
-        `, [person_commented]);
+    const amountStarBD = yield pool.query(`select * from users where id= $1`, [
+        person_commented,
+    ]);
     let amountStartBDUnique = amountStarBD.rows[0].qualification;
     amountStartBDUnique = parseFloat(amountStartBDUnique) + amount_start;
-    const updateAmountStartUser = yield pool.query("update users set qualification=$1 where id=$2 returning *", [amountStartBDUnique, person_commented]);
+    yield pool.query("update users set qualification=$1 where id=$2 returning *", [amountStartBDUnique, person_commented]);
     return result.rows[0].id;
 });
 exports.createComment = createComment;

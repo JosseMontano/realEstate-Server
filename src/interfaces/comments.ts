@@ -5,5 +5,5 @@ export default interface CommentsType {
   person_commented: number;
   description: string;
   amount_start: number;
-  url: string;
+  url_photo: string;
 }
