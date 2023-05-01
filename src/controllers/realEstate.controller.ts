@@ -127,7 +127,7 @@ export const createEstate = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
+  /* const {
     title,
     description,
     id_user,
@@ -136,11 +136,13 @@ export const createEstate = async (
     price,
     bathroom,
     squareMeter,
-  } = req.body;
+  } = req.body; */
+
+  const { realEstateId } = req.body;
 
   try {
     //save data of the realEstate
-    const result = await pool.query(
+    /*  const result = await pool.query(
       `insert into real_estates (title, description, user_id, type_real_estate_id, 
         available,amount_bedroom,price,amount_bathroom,square_meter) 
       values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *`,
@@ -156,7 +158,7 @@ export const createEstate = async (
         squareMeter,
       ]
     );
-    const id_real_estate = result.rows[0].id;
+    const id_real_estate = result.rows[0].id; */
 
     //save first photo
     let f = req.files?.url as UploadedFile;
@@ -172,15 +174,14 @@ export const createEstate = async (
       //save in table relational
       const resTableRelational = await pool.query(
         "insert into real_estates_photos (photo_id, real_estate_id) values ($1, $2) returning *",
-        [idPhoto, id_real_estate]
+        [idPhoto, realEstateId]
       );
       res.json(resTableRelational.rows[0]);
     }
 
-    res.json(result.rows[0]);
+    res.json(realEstateId);
   } catch (error: any) {
     next(error);
-    //es better send a 500
   }
 };
 
@@ -332,7 +333,7 @@ export const getAllEstatesByFilterCustom = async (
       minSquareMeter,
       maxSquareMeter,
     } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     const allEstate = await pool.query(
       `
       select DISTINCT on (re.id) re.id as idRealEstate, rp.id as idRealEstatePhoto,p.id as idPhoto,  p.url, 
