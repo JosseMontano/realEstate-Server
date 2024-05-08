@@ -20,6 +20,12 @@ export const realEstateType = new GraphQLObjectType({
     email: { type: GraphQLString },
     cellphone_number: { type: GraphQLFloat },
     available: { type: GraphQLBoolean },
+    amount_bedroom: { type: GraphQLFloat },
+    price: { type: GraphQLFloat },
+    amount_bathroom: { type: GraphQLFloat },
+    square_meter: { type: GraphQLFloat },
+    lat_long: { type: GraphQLString },
+    address: { type: GraphQLString },
   },
 });
 
@@ -34,6 +40,6 @@ export const realEsateUpdateStateType = new GraphQLObjectType({
   name: "realEstateUpdayeState",
   fields: {
     idRealEstate: { type: GraphQLID },
-    state: { type: GraphQLFloat},
+    state: { type: GraphQLFloat },
   },
 });

@@ -6,7 +6,6 @@ const QuestionSchema = z.object({
   question: z.string().nonempty(),
 });
 
-
 export const getAllquestionsByIdRealEstate = async (
   req: Request,
   res: Response,
@@ -24,7 +23,8 @@ export const getAllquestionsByIdRealEstate = async (
     let idsQuestions = " ";
     const rowsResponse = allQuestionResponse.rows;
 
-    if (allQuestionResponse.rowCount > 0) { // if there is ids so ...
+    if (allQuestionResponse.rowCount > 0) {
+      // if there is ids so ...
       for (let i = 0; i < rowsResponse.length; i++) {
         if (i == 0) {
           idsQuestions = "id !=" + rowsResponse[i].idquestion + idsQuestions;
@@ -82,4 +82,3 @@ export const deleteQuestion = async (
     next(error);
   }
 };
-

@@ -27,12 +27,13 @@ async function start() {
     })
   );
   /* cors */
-  app.use(
+   app.use(
     cors({
       credentials: true,
-      origin: [urlCors.secret],
+      origin: [urlCors.secret, "exp://192.168.1.13:19000"],
     })
-  );
+  ); 
+
   //    origin: urlCors.secret
   app.use(morgan("dev"));
   app.use(express.json());
@@ -71,7 +72,7 @@ async function start() {
       }))
     );
     console.log(`Listening to port ${port}`);
-    console.log(serverWS.options.port)
+    console.log(serverWS.options.port);
   });
 }
 

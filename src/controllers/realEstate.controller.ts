@@ -80,12 +80,13 @@ export const getEstateByUser = async (
   const result = await pool.query(
     `
     select DISTINCT on (re.id) re.id as id_real_estate, rp.id as id_real_estate_photo,p.id as id_photo,
-    p.url, 
-      p.public_id, re.title, re.description, u.email, re.available, u.cellphone_number, u.id as id_user
-      from real_estates_photos rp , photos p, real_estates re, users u 
-      where rp.photo_ID = p.id and rp.real_estate_id = re.id and re.user_id = u.id and 
+    p.url,
+    p.public_id, re.title, re.description, u.email, re.available, u.cellphone_number, u.id as id_user,
+    re.amount_bedroom, re.price, re.amount_bathroom, re.square_meter, re.lat_long, re.address
+	  from real_estates_photos rp , photos p, real_estates re, users u 
+    where rp.photo_ID = p.id and rp.real_estate_id = re.id and re.user_id = u.id and 
     re.user_id=${idUser}
-      ORDER BY re.id
+    ORDER BY re.id
       `
   );
 
